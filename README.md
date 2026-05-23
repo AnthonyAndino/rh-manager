@@ -1,39 +1,53 @@
-# RH Django - Full Stack HR Management
+# RH
 
-Sistema de gestión de Recursos Humanos con Django REST API backend y React frontend.
+Proyecto de Recursos Humanos organizado como monorepo:
 
-## Proyectos
+- `backend/`: API REST con Django, Django REST Framework y MySQL.
+- `frontend/`: aplicacion React/Vite que consume la API del backend.
 
-### `/backend` - Django REST API
-API para CRUD de empleados con Django y Django REST Framework, base de datos MySQL.
+## Estructura
 
+```text
+RH/
+  backend/
+    manage.py
+    requirements.txt
+    empleados/
+    rh_django/
+  frontend/
+    package.json
+    src/
+    public/
 ```
+
+## Backend
+
+```bash
 cd backend
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+copy .env.example .env
+python manage.py migrate
 python manage.py runserver
 ```
 
-### `/frontend` - React + Vite
-Interfaz de usuario con CRUD completo de empleados. Navegación con React Router.
+Por defecto el backend espera MySQL en `127.0.0.1:3306` con la base `recursos_humanos_db`.
+Puedes cambiar esos valores en `backend/.env`.
 
-```
+## Frontend
+
+```bash
 cd frontend
 npm install
+copy .env.example .env
 npm run dev
 ```
 
-| Ruta | Página |
-|------|--------|
-| `/` | Listado de empleados (con eliminar) |
-| `/agregar` | Formulario para agregar empleado |
-| `/editar/:idEmpleado` | Formulario para editar empleado |
+El frontend apunta por defecto a `http://localhost:8000/api/empleados`.
+Puedes cambiarlo en `frontend/.env` con `VITE_API_BASE_URL`.
 
-## Endpoints de la API
+## Notas de repositorio
 
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| GET | `/api/empleados` | Listar todos los empleados |
-| POST | `/api/empleados` | Crear un empleado |
-| GET | `/api/empleados/<id>` | Obtener un empleado por ID |
-| PUT | `/api/empleados/<id>` | Actualizar un empleado |
-| PATCH | `/api/empleados/<id>` | Actualización parcial |
-| DELETE | `/api/empleados/<id>` | Eliminar un empleado |
+No se suben carpetas generadas como `node_modules/`, `dist/`, `__pycache__/`, entornos virtuales ni archivos `.env` locales.
+

@@ -1,64 +1,48 @@
-# rh_django
+# Backend RH
 
-API RESTful para gestión de empleados (Recursos Humanos) construida con Django y Django REST Framework.
+API REST para gestion de empleados construida con Django, Django REST Framework y MySQL.
 
-## Tecnologías
+## Requisitos
 
-- **Python 3.12**
-- **Django 6.0**
-- **Django REST Framework 3.17**
-- **MySQL** (base de datos)
-- **django-cors-headers** (CORS para frontend Angular/React)
+- Python 3.12+
+- MySQL
 
-## Instalación
+## Instalacion
 
-1. Ubícate en la carpeta del backend:
-   ```bash
-   cd backend
-   ```
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+copy .env.example .env
+```
 
-2. Crea y activa el entorno virtual:
-   ```bash
-   python -m venv .venv
-   .venv\Scripts\activate  # Windows
-   source .venv/bin/activate  # Linux/Mac
-   ```
+## Variables de entorno
 
-3. Instala dependencias:
-   ```bash
-   pip install -r requirements.txt
-   ```
+El archivo `.env.example` incluye los valores configurables:
 
-4. Configura la base de datos MySQL en `rh_django/settings.py`.
+- `DJANGO_SECRET_KEY`
+- `DJANGO_DEBUG`
+- `DJANGO_ALLOWED_HOSTS`
+- `DB_NAME`
+- `DB_USER`
+- `DB_PASSWORD`
+- `DB_HOST`
+- `DB_PORT`
 
-5. Ejecuta las migraciones:
-   ```bash
-   python manage.py migrate
-   ```
+## Ejecucion
 
-6. Inicia el servidor:
-   ```bash
-   python manage.py runserver
-   ```
+```bash
+python manage.py migrate
+python manage.py runserver
+```
 
-## API Endpoints
+## Endpoints
 
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| GET | `/api/empleados` | Listar todos los empleados |
-| POST | `/api/empleados` | Crear un empleado |
-| GET | `/api/empleados/<id>` | Obtener un empleado por ID |
-| PUT | `/api/empleados/<id>` | Actualizar un empleado |
-| PATCH | `/api/empleados/<id>` | Actualización parcial |
-| DELETE | `/api/empleados/<id>` | Eliminar un empleado |
+| Metodo | Endpoint | Descripcion |
+| --- | --- | --- |
+| GET | `/api/empleados` | Lista empleados |
+| POST | `/api/empleados` | Crea empleado |
+| GET | `/api/empleados/<id>` | Obtiene empleado |
+| PUT/PATCH | `/api/empleados/<id>` | Actualiza empleado |
+| DELETE | `/api/empleados/<id>` | Elimina empleado |
 
-## Modelo
-
-**Empleado**
-
-| Campo | Tipo | Descripción |
-|-------|------|-------------|
-| idEmpleado | AutoField | ID autoincremental |
-| nombre | CharField(255) | Nombre del empleado |
-| departamento | CharField(100) | Departamento |
-| sueldo | DecimalField(10,2) | Salario |
