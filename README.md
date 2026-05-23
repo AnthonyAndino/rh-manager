@@ -1,6 +1,6 @@
-# RH
+# RH Manager
 
-Proyecto de Recursos Humanos organizado como monorepo:
+Sistema de gestion de Recursos Humanos organizado como monorepo:
 
 - `backend/`: API REST con Django, Django REST Framework y MySQL.
 - `frontend/`: aplicacion React/Vite que consume la API del backend.
@@ -8,7 +8,7 @@ Proyecto de Recursos Humanos organizado como monorepo:
 ## Estructura
 
 ```text
-RH/
+rh-manager/
   backend/
     manage.py
     requirements.txt
