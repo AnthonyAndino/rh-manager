@@ -27,7 +27,7 @@ cd backend
 python -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
-copy .env.example .env
+copy ..\.env.example .env
 python manage.py migrate
 python manage.py runserver
 ```
@@ -50,7 +50,7 @@ Puedes cambiar esos valores en `backend/.env`.
 ```bash
 cd frontend
 npm install
-copy .env.example .env
+copy ..\.env.example .env
 npm run dev
 ```
 
@@ -68,5 +68,6 @@ npm run preview
 
 ## Notas de repositorio
 
+El repositorio usa un solo `.gitignore` y un solo `.env.example` en la raiz.
 No se suben carpetas generadas como `node_modules/`, `dist/`, `__pycache__/`, entornos virtuales ni archivos `.env` locales.
 
