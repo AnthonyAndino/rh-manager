@@ -1,0 +1,176 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+    --bg-gradient: radial-gradient(circle at top, #111318 0%, 0%, #07080a 100%);
+    --panel-bg: rgba(22, 28, 38, 0.6);
+    --panel-border: rgba(255, 255, 255, 0.06);
+    --accent-color: #6366f1; /* Índigo vibrante */
+    --accent-glow: rgba(99, 102, 241, 0.25);
+    --accent-cyan: #06b6d4; /* Cian moderno */
+    --accent-cyan-glow: rgba(6, 182, 212, 0.25);
+    
+    --text-primary: #f3f4f6;
+    --text-secondary: #9ca3af;
+    --glass-blur: 16px;
+
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-gradient);
+    background-attachment: fixed;
+    color: var(--text-primary);
+    min-height: 100vh;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+}
+
+.card {
+    backgroud: var(--panel-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--panel-border);
+    box-shadow: 0 12px 40px - 0 rgba(0, 0, 0, 0.4);
+    transition: var(--transition-smooth);
+    overflow: hidden;
+}
+
+.card:hover {
+    border-color: rgba(99, 102, 241, 0.2);
+    box-shadow: 0 16px 48px 0 rgba(99, 102, 241, 0.1);
+}
+
+.card-header {
+  background: rgba(255, 255, 255, 0.01) !important;
+  border-bottom: 1px solid var(--panel-border) !important;
+  padding: 20px 24px !important;
+  font-weight: 700;
+  font-size: 1.15rem;
+}
+
+.form-control {
+  background: rgba(10, 12, 16, 0.5) !important;
+  border: 1px solid var(--panel-border) !important;
+  color: var(--text-primary) !important;
+  border-radius: 12px !important;
+  padding: 12px 16px !important;
+  transition: var(--transition-smooth) !important;
+}
+
+.form-control:focus {
+  background: rgba(10, 12, 16, 0.8) !important;
+  border-color: var(--accent-color) !important;
+  box-shadow: 0 0 0 4px var(--accent-glow) !important;
+  outline: none;
+}
+
+.form-control::placeholder {
+  color: #4b5563 !important;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+  border: none !important;
+  font-weight: 600 !important;
+  padding: 12px 24px !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.3) !important;
+  transition: var(--transition-smooth) !important;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px); /* Pequeña elevación física */
+  box-shadow: 0 6px 20px 0 rgba(99, 102, 241, 0.5) !important;
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid var(--panel-border) !important;
+  color: var(--text-primary) !important;
+  font-weight: 600 !important;
+  padding: 12px 24px !important;
+  border-radius: 12px !important;
+  transition: var(--transition-smooth) !important;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+.table {
+  color: var(--text-primary) !important;
+  margin-bottom: 0 !important;
+}
+
+.table th {
+  font-weight: 600;
+  color: var(--text-secondary);
+  border-bottom: 2px solid var(--panel-border) !important;
+  padding: 16px !important;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.table td {
+  padding: 16px !important;
+  border-bottom: 1px solid var(--panel-border) !important;
+  font-size: 0.95rem;
+}
+
+.table-hover tbody tr:hover {
+  background: rgba(255, 255, 255, 0.015) !important;
+}
+
+.metric-card {
+  background: linear-gradient(135deg, rgba(22, 28, 38, 0.8) 0%, rgba(13, 16, 22, 0.8) 100%);
+  border: 1px solid var(--panel-border);
+  border-radius: 18px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  transition: var(--transition-smooth);
+}
+
+.metric-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--accent-color);
+}
+
+.metric-card.cyan::before {
+  background: var(--accent-cyan);
+}
+
+.metric-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.metric-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.metric-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ffffff 0%, #a1a1aa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
