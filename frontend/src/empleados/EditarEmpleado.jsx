@@ -1,101 +1,126 @@
-import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
-import { obtenerEmpleado, actualizarEmpleado } from "./empleadosApi"
-import EmpleadoForm from "./EmpleadosForm"
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { obtenerEmpleado, actualizarEmpleado } from "./empleadosApi";
+import EmpleadoForm from "./EmpleadosForm";
 
 const empleadoInicial = {
     nombre: '',
     departamento: '',
     sueldo: 0,
-}
+    fecha_contratacion: '',
+    puesto: '',
+    correo_corporativo: '',
+    telefono: '',
+    estatus: 'Activo',
+    foto_perfil: null
+};
 
 export default function EditarEmpleado() {
-    const { idEmpleado } = useParams()
-    const navigate = useNavigate()
+    const { idEmpleado } = useParams();
+    const navigate = useNavigate();
 
-    const [empleado, setEmpleado] = useState(empleadoInicial)
-    const [cargando, setCargando] = useState(true)
-    const [enviando, setEnviando] = useState(false)
-    const [error, setError] = useState('')
+    const [empleado, setEmpleado] = useState(empleadoInicial);
+    const [cargando, setCargando] = useState(true);
+    const [enviando, setEnviando] = useState(false);
+    const [error, setError] = useState('');
 
     useEffect(() => {
         const cargar = async () => {
             try {
-                const { data } = await obtenerEmpleado(idEmpleado)
+                const { data } = await obtenerEmpleado(idEmpleado);
 
                 setEmpleado({
                     nombre: data?.nombre ?? '',
                     departamento: data?.departamento ?? '',
                     sueldo: Number(data?.sueldo) || 0,
-                })
+                    fecha_contratacion: data?.fecha_contratacion ?? '',
+                    puesto: data?.puesto ?? '',
+                    correo_corporativo: data?.correo_corporativo ?? '',
+                    telefono: data?.telefono ?? '',
+                    estatus: data?.estatus ?? 'Activo',
+                    foto_perfil: data?.foto_perfil ?? null
+                });
             } catch (e) {
-                setError('No se pudo cargar el empleado')
+                setError('No se pudo cargar el empleado');
             } finally {
-                setCargando(false)
+                setCargando(false);
             }
-        }
+        };
 
-        cargar()
-    }, [idEmpleado])
+        cargar();
+    }, [idEmpleado]);
 
     const actualizarCampo = (campo, valor) => {
         setEmpleado((actual) => ({
             ...actual,
             [campo]: valor,
-        }))
-    }
+        }));
+    };
 
     const onSubmit = async (e) => {
-        e.preventDefault()
-        setError('')
+        e.preventDefault();
+        setError('');
 
-        const nombreOk = empleado.nombre.trim()
-        const deptoOk = empleado.departamento.trim()
-        const sueldoOk = Number(empleado.sueldo) || 0
+        const nombreOk = empleado.nombre.trim();
+        const deptoOk = empleado.departamento.trim();
+        const puestoOk = empleado.puesto.trim();
+        const correoOk = empleado.correo_corporativo.trim();
+        const sueldoOk = Number(empleado.sueldo) || 0;
 
-        if (!nombreOk || !deptoOk || sueldoOk <= 0) {
-            setError('Completa Nombre, departamento y un sueldo mayor a 0.')
-            return
+        if (!nombreOk || !deptoOk || !puestoOk || !correoOk || sueldoOk <= 0) {
+            setError('Por favor complete Nombre, Departamento, Puesto, Correo Corporativo y un sueldo válido.');
+            return;
         }
 
         try {
-            setEnviando(true)
+            setEnviando(true);
 
-            await actualizarEmpleado(idEmpleado, {
-                nombre: nombreOk,
-                departamento: deptoOk,
-                sueldo: sueldoOk,
-            })
+            // FormData para soportar carga de archivos
+            const formData = new FormData();
+            formData.append('nombre', nombreOk);
+            formData.append('departamento', deptoOk);
+            formData.append('sueldo', sueldoOk);
+            formData.append('puesto', puestoOk);
+            formData.append('fecha_contratacion', empleado.fecha_contratacion);
+            formData.append('correo_corporativo', correoOk);
+            formData.append('telefono', empleado.telefono ? empleado.telefono.trim() : '');
+            formData.append('estatus', empleado.estatus);
+            
+            // Si cargó una nueva foto de tipo File, la adjuntamos
+            if (empleado.foto_perfil instanceof File) {
+                formData.append('foto_perfil', empleado.foto_perfil);
+            }
 
-            navigate('/')
+            await actualizarEmpleado(idEmpleado, formData);
+            navigate('/');
         } catch (err) {
-            setError('No se pudo guardar los cambios del empleado')
+            setError(err.response?.data?.error || 'No se pudo guardar los cambios del empleado.');
         } finally {
-            setEnviando(false)
+            setEnviando(false);
         }
-    }
+    };
 
     if (cargando) {
-        return <p className="text-secondary">Cargando...</p>
+        return <div className="text-center py-5"><p className="text-secondary">Cargando...</p></div>;
     }
 
     return (
-        <div className="card">
+        <div className="card max-w-lg mx-auto animate-fade-in" style={{ maxWidth: '750px' }}>
             <div className="card-header">
-                <strong>Editar empleado #{idEmpleado}</strong>
+                <strong>Editar Colaborador #{idEmpleado}</strong>
             </div>
             <div className="card-body">
-                {error && <div className="alert alert-danger mb-3">{error}</div>}
+                {error && <div className="alert alert-danger mb-4 rounded-3 small">{error}</div>}
 
                 <EmpleadoForm
                     empleado={empleado}
                     enviando={enviando}
-                    textoBoton="Guardar"
+                    textoBoton="Guardar Cambios"
                     onChange={actualizarCampo}
                     onSubmit={onSubmit}
-                    onCancel={() => navigate(-1)}
+                    onCancel={() => navigate('/')}
                 />
             </div>
         </div>
-    )
+    );
 }

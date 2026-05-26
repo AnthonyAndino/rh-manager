@@ -1,74 +1,92 @@
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { crearEmpleado } from "./empleadosApi"
-import EmpleadoForm from "./EmpleadosForm"
-
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { crearEmpleado } from "./empleadosApi";
+import EmpleadoForm from "./EmpleadosForm";
 
 const empleadoInicial = {
     nombre: '',
     departamento: '',
     sueldo: 0,
-}
+    fecha_contratacion: new Date().toISOString().split('T')[0],
+    puesto: '',
+    correo_corporativo: '',
+    telefono: '',
+    estatus: 'Activo',
+    foto_perfil: null
+};
 
 export default function AgregarEmpleado() {
-    const [empleado, setEmpleado] = useState(empleadoInicial)
-    const [enviando, setEnviando] = useState(false)
-    const [error, setError] = useState('')
-    const navigate = useNavigate()
+    const [empleado, setEmpleado] = useState(empleadoInicial);
+    const [enviando, setEnviando] = useState(false);
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
 
     const actualizaCampo = (campo, valor) => {
         setEmpleado((actual) => ({
             ...actual,
             [campo]: valor,
-        }))
-    }
+        }));
+    };
 
     const onSubmit = async (e) => {
-        e.preventDefault()
-        setError('')
+        e.preventDefault();
+        setError('');
 
-        const nombreOk = empleado.nombre.trim()
-        const deptoOk = empleado.departamento.trim()
-        const sueldoOk = Number(empleado.sueldo) || 0
+        const nombreOk = empleado.nombre.trim();
+        const deptoOk = empleado.departamento.trim();
+        const puestoOk = empleado.puesto.trim();
+        const correoOk = empleado.correo_corporativo.trim();
+        const sueldoOk = Number(empleado.sueldo) || 0;
 
-        if (!nombreOk || !deptoOk || sueldoOk <= 0) {
-            setError('Completa Nombre, departamento y un sueldo mayor a 0')
-            return
+        if (!nombreOk || !deptoOk || !puestoOk || !correoOk || sueldoOk <= 0) {
+            setError('Por favor complete Nombre, Departamento, Puesto, Correo Corporativo y un sueldo válido.');
+            return;
         }
 
         try {
-            setEnviando(true)
+            setEnviando(true);
 
-            await crearEmpleado({
-                nombre: nombreOk,
-                departamento: deptoOk,
-                sueldo: sueldoOk,
-            })
+            // Construir el FormData para soportar carga de archivos
+            const formData = new FormData();
+            formData.append('nombre', nombreOk);
+            formData.append('departamento', deptoOk);
+            formData.append('sueldo', sueldoOk);
+            formData.append('puesto', puestoOk);
+            formData.append('fecha_contratacion', empleado.fecha_contratacion);
+            formData.append('correo_corporativo', correoOk);
+            formData.append('telefono', empleado.telefono ? empleado.telefono.trim() : '');
+            formData.append('estatus', empleado.estatus);
+            
+            if (empleado.foto_perfil instanceof File) {
+                formData.append('foto_perfil', empleado.foto_perfil);
+            }
 
-            navigate('/')
+            await crearEmpleado(formData);
+            navigate('/');
         } catch (e) {
-            setError('No se pudo guardar el empleado')
+            setError(e.response?.data?.error || 'No se pudo guardar el empleado. Valida que el correo sea único.');
         } finally {
-            setEnviando(false)
+            setEnviando(false);
         }
-    }
+    };
 
     return (
-        <div className="card">
+        <div className="card max-w-lg mx-auto animate-fade-in" style={{ maxWidth: '750px' }}>
             <div className="card-header">
-                <strong>Agregar Empleado</strong>
+                <strong>Agregar Colaborador</strong>
             </div>
             <div className="card-body">
-                {error && <div className="alert alert-danger mb-3">{error}</div>}
+                {error && <div className="alert alert-danger mb-4 rounded-3 small">{error}</div>}
 
                 <EmpleadoForm 
                     empleado={empleado}
                     enviando={enviando}
-                    textoBoton="Guardar"
+                    textoBoton="Registrar Personal"
                     onChange={actualizaCampo}
                     onSubmit={onSubmit}
+                    onCancel={() => navigate('/')}
                 />
             </div>
         </div>
-    )
+    );
 }

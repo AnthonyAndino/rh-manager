@@ -1,27 +1,57 @@
 from django.db import models
+from django.contrib.auth.models import User
 
+# --- PERFIL DEL USUARIO CON ROLES ---
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    rol = models.CharField(max_length=20, default='empleado') # admin / empleado
+
+    class Meta:
+        db_table = 'user_profiles'
+
+    def __str__(self):
+        return f'{self.user.username} ({self.rol})'
+
+
+# --- MÓDULO EMPLEADOS (EXTENDIDO) ---
 class Empleado(models.Model):
     idEmpleado = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=255)
     departamento = models.CharField(max_length=100)
     sueldo = models.DecimalField(max_digits=10, decimal_places=2)
     
+    # Nuevos campos corporativos
+    fecha_contratacion = models.DateField(null=True, blank=True)
+    puesto = models.CharField(max_length=150, default='Colaborador')
+    correo_corporativo = models.EmailField(unique=True, null=True, blank=True)
+    telefono = models.CharField(max_length=20, null=True, blank=True)
+    estatus = models.CharField(max_length=50, default='Activo') # Activo / Inactivo / Suspendido
+    foto_perfil = models.FileField(upload_to='foto_perfil/', null=True, blank=True)
+    
+    # Enlace opcional a un usuario del sistema (para portal del empleado)
+    user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='empleado')
+
     class Meta:
         db_table = 'empleados'
         
     def __str__(self):
-        return f'{self.idEmpleado} - {self.nombre} ({self.departamento})'
-    
+        return f'{self.idEmpleado} - {self.nombre} ({self.puesto})'
+
+
+# --- MÓDULO ASISTENCIA ---
 class Asistencia(models.Model):
     idAsistencia = models.AutoField(primary_key=True)
     empleado = models.ForeignKey(Empleado, on_delete=models.CASCADE, db_column='idEmpleado', related_name='asistencias')
-    fecha = models.TimeField()
+    fecha = models.DateField()
     hora_entrada = models.TimeField()
     hora_salida = models.TimeField(null=True, blank=True)
     estado = models.CharField(max_length=50, default='A Tiempo')
     
-    class Meta: db_table = 'asistencia'
-    
+    class Meta: 
+        db_table = 'asistencia'
+
+
+# --- MÓDULO NÓMINAS ---
 class Nomina(models.Model):
     idNomina = models.AutoField(primary_key=True)
     empleado = models.ForeignKey(Empleado, on_delete=models.CASCADE, db_column='idEmpleado', related_name='nominas')
@@ -33,4 +63,15 @@ class Nomina(models.Model):
     
     class Meta:
         db_table = 'nominas'
-    
+
+
+# --- NUEVO: MÓDULO DE CONFIGURACIÓN DE NÓMINA ---
+class ConfiguracionNomina(models.Model):
+    idConfiguracion = models.AutoField(primary_key=True)
+    porcentaje_deduccion = models.DecimalField(max_digits=5, decimal_places=2, default=10.00) # Porcentaje de deducciones, ej: 10.00%
+    bono_fijo = models.DecimalField(max_digits=10, decimal_places=2, default=120.00)          # Bono fijo, ej: $120.00
+    fecha_vigencia = models.DateField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'configuracion_nomina'
+

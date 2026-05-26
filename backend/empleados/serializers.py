@@ -1,12 +1,16 @@
 from rest_framework import serializers
-from .models import Empleado, Asistencia, Nomina
+from .models import Empleado, Asistencia, Nomina, ConfiguracionNomina
 
 class EmpleadoSerializer(serializers.ModelSerializer):
     idEmpleado = serializers.IntegerField(read_only=True)
     
     class Meta:
         model = Empleado
-        fields = ['idEmpleado', 'nombre', 'departamento', 'sueldo']
+        fields = [
+            'idEmpleado', 'nombre', 'departamento', 'sueldo',
+            'fecha_contratacion', 'puesto', 'correo_corporativo', 
+            'telefono', 'estatus', 'foto_perfil', 'user'
+        ]
         
     def validate_nombre(self, value: str):
         v = (value or '').strip()
@@ -42,5 +46,14 @@ class NominaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Nomina
         fields = ['idNomina', 'empleado', 'nombre_empleado', 'fecha_pago', 'sueldo_base', 'deducciones', 'bonos', 'sueldo_neto']
+
+
+class ConfiguracionNominaSerializer(serializers.ModelSerializer):
+    idConfiguracion = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = ConfiguracionNomina
+        fields = ['idConfiguracion', 'porcentaje_deduccion', 'bono_fijo', 'fecha_vigencia']
+
         
         

@@ -1,87 +1,349 @@
+/* ==========================================================================
+   Sistema de diseño minimalista: "Sand & Terracotta"
+   ========================================================================== */
+
+/* Importacion de Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-    --bg-gradient: radial-gradient(circle at top, #111318 0%, 0%, #07080a 100%);
-    --panel-bg: rgba(22, 28, 38, 0.6);
-    --panel-border: rgba(255, 255, 255, 0.06);
-    --accent-color: #6366f1; /* Índigo vibrante */
-    --accent-glow: rgba(99, 102, 241, 0.25);
-    --accent-cyan: #06b6d4; /* Cian moderno */
-    --accent-cyan-glow: rgba(6, 182, 212, 0.25);
-    
-    --text-primary: #f3f4f6;
-    --text-secondary: #9ca3af;
-    --glass-blur: 16px;
-
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Paleta de colores cálida y minimalista basada en el Mockup */
+  --bg-app: #FAF6EE;             /* Arena claro súper limpio */
+  --card-bg: #FFFFFF;            /* Tarjetas de fondo blanco */
+  --border-color: #EBE4D5;       /* Bordes muy finos y cálidos */
+  --text-dark: #2C2B29;          /* Charcoal para máxima legibilidad */
+  --text-muted: #6B6A66;         /* Gris con mejor contraste para etiquetas secundarias */
+  
+  /* Acentos de Color */
+  --primary-terracotta: #E96944;  /* Naranja arcilla/terracota principal */
+  --primary-hover: #D55734;       /* Terracota más oscuro para hovers */
+  --accent-cream: #F5EFEB;        /* Crema suave para botones secundarios y selecciones */
+  --accent-cyan: #4B918A;         /* Verde azulado suave para badges activos */
+  --accent-cyan-light: #EBF4F3;
+  --accent-yellow: #DF9E47;       /* Amarillo quemado para advertencias */
+  --accent-yellow-light: #FCF5EC;
+  --accent-red: #C8504B;          /* Rojo suave para peligros/errores */
+  --accent-red-light: #FBEFEF;
+  
+  /* Animaciones y Bordes */
+  --border-radius-lg: 24px;
+  --border-radius-md: 14px;
+  --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --shadow-subtle: 0 4px 20px rgba(44, 43, 41, 0.02);
+  --shadow-hover: 0 8px 30px rgba(233, 105, 68, 0.08);
 }
 
+/* --- ESTILOS GLOBALES --- */
 body {
-    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: var(--bg-gradient);
-    background-attachment: fixed;
-    color: var(--text-primary);
-    min-height: 100vh;
-    margin: 0;
-    -webkit-font-smoothing: antialiased;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--bg-app);
+  color: var(--text-dark);
+  min-height: 100vh;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
 }
 
+/* Forzar mejor contraste en textos secundarios */
+.text-secondary {
+  color: #6B6A66 !important;
+}
+.text-muted {
+  color: #6B6A66 !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-dark);
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+p {
+  color: var(--text-muted);
+}
+
+/* --- ESTRUCTURA GENERAL CON SIDEBAR --- */
+.app-wrapper {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar Fijo Izquierdo */
+.sidebar {
+  width: 260px;
+  background-color: #FFFFFF;
+  border-right: 1px solid var(--border-color);
+  padding: 40px 24px;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+}
+
+/* Contenedor Principal Ajustado al Sidebar */
+.main-content {
+  flex: 1;
+  margin-left: 260px;
+  padding: 48px;
+  background-color: var(--bg-app);
+}
+
+/* Perfil de Usuario en el Sidebar */
+.sidebar-user {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.sidebar-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background-color: var(--accent-cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--primary-terracotta);
+  border: 2px solid var(--border-color);
+  font-size: 1.5rem;
+  margin-bottom: 16px;
+  overflow: hidden;
+  object-fit: cover;
+}
+
+.sidebar-user-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 2px;
+}
+
+.sidebar-user-role {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+/* Botones de Navegación del Sidebar */
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 20px;
+  border-radius: var(--border-radius-md);
+  color: var(--text-muted) !important;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: var(--transition-smooth);
+}
+
+.sidebar-link:hover {
+  background-color: var(--accent-cream);
+  color: var(--text-dark) !important;
+}
+
+.sidebar-link.active {
+  background-color: var(--primary-terracotta);
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 14px rgba(233, 105, 68, 0.25);
+}
+
+.sidebar-link-danger {
+  color: var(--accent-red) !important;
+  margin-top: auto; /* Mueve el botón de salir al fondo */
+}
+
+.sidebar-link-danger:hover {
+  background-color: var(--accent-red-light);
+  color: var(--accent-red) !important;
+}
+
+/* --- TARJETAS --- */
 .card {
-    backgroud: var(--panel-bg);
-    backdrop-filter: blur(var(--glass-blur));
-    -webkit-backdrop-filter: blur(var(--glass-blur));
-    border: 1px solid var(--panel-border);
-    box-shadow: 0 12px 40px - 0 rgba(0, 0, 0, 0.4);
-    transition: var(--transition-smooth);
-    overflow: hidden;
+  background: var(--card-bg) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--border-radius-lg) !important;
+  box-shadow: var(--shadow-subtle) !important;
+  transition: var(--transition-smooth) !important;
+  padding: 8px;
 }
 
 .card:hover {
-    border-color: rgba(99, 102, 241, 0.2);
-    box-shadow: 0 16px 48px 0 rgba(99, 102, 241, 0.1);
+  border-color: rgba(233, 105, 68, 0.15) !important;
 }
 
 .card-header {
-  background: rgba(255, 255, 255, 0.01) !important;
-  border-bottom: 1px solid var(--panel-border) !important;
-  padding: 20px 24px !important;
+  background: transparent !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  padding: 24px 24px 16px 24px !important;
+  font-weight: 800;
+  font-size: 1.25rem;
+  color: var(--text-dark);
+  letter-spacing: -0.5px;
+}
+
+.card-body {
+  padding: 24px !important;
+}
+
+/* --- TARJETAS DE INDICADORES (KPIs) --- */
+.metric-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  padding: 32px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-subtle);
+  transition: var(--transition-smooth);
+}
+
+.metric-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+  border-color: rgba(233, 105, 68, 0.12);
+}
+
+.metric-card.terracotta {
+  background-color: var(--primary-terracotta);
+  color: #FFFFFF;
+  border-color: var(--primary-terracotta);
+}
+
+.metric-card.terracotta .metric-title {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.metric-card.terracotta .metric-value {
+  color: #FFFFFF;
+}
+
+.metric-card.terracotta svg {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.metric-title {
+  font-size: 0.85rem;
   font-weight: 700;
-  font-size: 1.15rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
 }
 
-.form-control {
-  background: rgba(10, 12, 16, 0.5) !important;
-  border: 1px solid var(--panel-border) !important;
-  color: var(--text-primary) !important;
-  border-radius: 12px !important;
-  padding: 12px 16px !important;
+.metric-value {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--text-dark);
+  letter-spacing: -1.5px;
+}
+
+.metric-icon-wrapper {
+  opacity: 0.9;
+  color: var(--primary-terracotta);
+}
+
+/* --- FORMULARIOS MINIMALISTAS --- */
+.form-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-control, .form-select {
+  background-color: var(--accent-cream) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-dark) !important;
+  border-radius: var(--border-radius-md) !important;
+  padding: 14px 18px !important;
+  font-size: 0.95rem !important;
+  font-weight: 500 !important;
   transition: var(--transition-smooth) !important;
+  box-shadow: none !important;
 }
 
-.form-control:focus {
-  background: rgba(10, 12, 16, 0.8) !important;
-  border-color: var(--accent-color) !important;
-  box-shadow: 0 0 0 4px var(--accent-glow) !important;
-  outline: none;
+.form-control:focus, .form-select:focus {
+  background-color: #FFFFFF !important;
+  border-color: var(--primary-terracotta) !important;
+  box-shadow: 0 0 0 4px rgba(233, 105, 68, 0.08) !important;
 }
 
 .form-control::placeholder {
-  color: #4b5563 !important;
+  color: #AAABAA !important;
+  font-weight: 400;
 }
 
+/* --- TABLAS MINIMALISTAS --- */
+.table-responsive {
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+}
+
+.table {
+  background-color: #FFFFFF !important;
+  margin-bottom: 0 !important;
+}
+
+.table th {
+  background-color: #FFFFFF !important;
+  font-weight: 700;
+  color: var(--text-muted);
+  border-bottom: 2px solid var(--border-color) !important;
+  padding: 18px 24px !important;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.table td {
+  background-color: #FFFFFF !important;
+  padding: 18px 24px !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  font-size: 0.95rem;
+  color: var(--text-dark);
+  font-weight: 500;
+}
+
+.table-hover tbody tr:hover td {
+  background-color: rgba(233, 105, 68, 0.015) !important;
+}
+
+/* --- BOTONES MINIMALISTAS --- */
 .btn-primary {
-  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+  background: var(--primary-terracotta) !important;
+  color: #FFFFFF !important;
   border: none !important;
-  font-weight: 600 !important;
-  padding: 12px 24px !important;
-  border-radius: 12px !important;
-  box-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.3) !important;
+  font-weight: 700 !important;
+  padding: 14px 28px !important;
+  border-radius: var(--border-radius-md) !important;
+  box-shadow: 0 4px 14px rgba(233, 105, 68, 0.2) !important;
   transition: var(--transition-smooth) !important;
+  font-size: 0.95rem !important;
 }
 
 .btn-primary:hover {
-  transform: translateY(-2px); /* Pequeña elevación física */
-  box-shadow: 0 6px 20px 0 rgba(99, 102, 241, 0.5) !important;
+  background: var(--primary-hover) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(233, 105, 68, 0.3) !important;
 }
 
 .btn-primary:active {
@@ -89,158 +351,142 @@ body {
 }
 
 .btn-secondary {
-  background: rgba(255, 255, 255, 0.03) !important;
-  border: 1px solid var(--panel-border) !important;
-  color: var(--text-primary) !important;
-  font-weight: 600 !important;
-  padding: 12px 24px !important;
-  border-radius: 12px !important;
+  background: #FFFFFF !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-dark) !important;
+  font-weight: 700 !important;
+  padding: 14px 28px !important;
+  border-radius: var(--border-radius-md) !important;
   transition: var(--transition-smooth) !important;
+  font-size: 0.95rem !important;
+  box-shadow: var(--shadow-subtle) !important;
 }
 
 .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.08) !important;
-  border-color: rgba(255, 255, 255, 0.15) !important;
+  background: var(--accent-cream) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-dark) !important;
 }
 
-.table {
-  color: var(--text-primary) !important;
-  margin-bottom: 0 !important;
-}
-
-.table th {
-  font-weight: 600;
-  color: var(--text-secondary);
-  border-bottom: 2px solid var(--panel-border) !important;
-  padding: 16px !important;
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.table td {
-  padding: 16px !important;
-  border-bottom: 1px solid var(--panel-border) !important;
-  font-size: 0.95rem;
-}
-
-.table-hover tbody tr:hover {
-  background: rgba(255, 255, 255, 0.015) !important;
-}
-
-.metric-card {
-  background: linear-gradient(135deg, rgba(22, 28, 38, 0.8) 0%, rgba(13, 16, 22, 0.8) 100%);
-  border: 1px solid var(--panel-border);
-  border-radius: 18px;
-  padding: 24px;
-  position: relative;
-  overflow: hidden;
-  transition: var(--transition-smooth);
-}
-
-.metric-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 4px;
-  height: 100%;
-  background: var(--accent-color);
-}
-
-.metric-card.cyan::before {
-  background: var(--accent-cyan);
-}
-
-.metric-card:hover {
-  transform: translateY(-4px);
-  border-color: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-}
-
-.metric-title {
-  font-size: 0.85rem;
-  font-weight: 600;
+/* --- BADGES MINIMALISTAS (Color-code minimal) --- */
+.badge-minimal {
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 50px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: var(--text-secondary);
-  margin-bottom: 8px;
 }
 
-.metric-value {
-  font-size: 1.8rem;
-  font-weight: 800;
-  background: linear-gradient(135deg, #ffffff 0%, #a1a1aa 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.badge-minimal.active {
+  background-color: var(--accent-cyan-light);
+  color: var(--accent-cyan);
+  border: 1px solid rgba(75, 145, 138, 0.15);
 }
 
+.badge-minimal.inactive {
+  background-color: var(--accent-red-light);
+  color: var(--accent-red);
+  border: 1px solid rgba(200, 80, 75, 0.15);
+}
+
+.badge-minimal.suspended {
+  background-color: var(--accent-yellow-light);
+  color: var(--accent-yellow);
+  border: 1px solid rgba(223, 158, 71, 0.15);
+}
+
+/* --- PANTALLA DE LOGIN / REGISTRO --- */
 .auth-wrapper {
-  min-height: calc(100vh - 120px);
+  background-color: var(--bg-app);
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
 }
+
 .auth-card {
-  background: rgba(18, 22, 32, 0.55);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  border-radius: 24px;
+  background: #FFFFFF !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--border-radius-lg) !important;
+  box-shadow: 0 16px 40px rgba(44, 43, 41, 0.04) !important;
   width: 100%;
-  max-width: 400px;
-  padding: 40px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  max-width: 440px;
+  padding: 48px !important;
 }
+
 .auth-header {
   text-align: center;
-  margin-bottom: 32px;
+  margin-bottom: 36px;
 }
+
 .auth-title {
-  font-size: 1.5rem;
+  font-size: 1.7rem;
   font-weight: 800;
-  letter-spacing: -0.5px;
-  color: var(--text-primary);
-  margin-top: 12px;
+  color: var(--text-dark);
+  letter-spacing: -0.8px;
+  margin-top: 16px;
   margin-bottom: 6px;
 }
+
 .auth-subtitle {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  font-weight: 500;
 }
-.input-icon-group {
-  position: relative;
-}
-.input-icon-group svg {
-  position: absolute;
-  left: 16px;
-  top: 14px;
-  color: var(--text-secondary);
-  opacity: 0.6;
-}
-.input-icon-group .form-control {
-  padding-left: 46px !important;
-}
+
 .auth-footer {
   text-align: center;
   margin-top: 24px;
-  font-size: 0.85rem;
+  font-size: 0.88rem;
+  color: var(--text-muted);
 }
+
 .auth-link {
-  color: var(--accent-cyan);
+  color: var(--primary-terracotta) !important;
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 700;
   transition: var(--transition-smooth);
 }
+
 .auth-link:hover {
-  color: #22d3ee;
-  text-shadow: 0 0 10px rgba(34, 211, 238, 0.3);
+  color: var(--primary-hover) !important;
+  text-shadow: 0 0 10px rgba(233, 105, 68, 0.1);
 }
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
+
+/* --- ENTRADA DE TEXTO CON ICONOS --- */
+.input-icon-group {
+  position: relative;
+}
+
+.input-icon-group svg {
+  position: absolute;
+  left: 16px;
+  top: 16px;
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+
+.input-icon-group .form-control {
+  padding-left: 48px !important;
+}
+
+/* Foco de buscador */
+.position-relative svg {
+  color: var(--text-muted);
+  opacity: 0.8;
+}
+
+/* Animación sutil de entrada */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
 .animate-fade-in {
-  animation: fadeIn 0.4s ease forwards;
+  animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }

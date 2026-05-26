@@ -1,80 +1,116 @@
-import { useEffect, useState } from 'react'
-import { NumericFormat } from 'react-number-format'
-import { Link } from "react-router-dom"
-import { obtenerEmpleados, eliminarEmpleado } from './empleadosApi'
-import { Users, DollarSign, Activity, Search, UserPlus, Edit3, Trash2 } from 'lucide-react'
+import { useEffect, useState } from 'react';
+import { NumericFormat } from 'react-number-format';
+import { Link } from "react-router-dom";
+import { obtenerEmpleados, eliminarEmpleado } from './empleadosApi';
+import { useAuth } from '../AuthContext';
+import { Users, DollarSign, Activity, Search, UserPlus, Edit3, Trash2, ShieldAlert } from 'lucide-react';
 
 export default function ListadoEmpleados() {
-    const [empleados, setEmpleados] = useState([])
-    const [cargando, setCargando] = useState(true)
-    const [error, setError] = useState('')
-    const [eliminandoId, setEliminandoId] = useState(null)
-    const [busqueda, setBusqueda] = useState('')
+    const { user } = useAuth();
+    const [empleados, setEmpleados] = useState([]);
+    const [cargando, setCargando] = useState(true);
+    const [error, setError] = useState('');
+    const [eliminandoId, setEliminandoId] = useState(null);
+
+    // Barra de búsqueda e Inteligencia de Filtros
+    const [busqueda, setBusqueda] = useState('');
+    const [filtroDepto, setFiltroDepto] = useState('');
+    const [filtroEstatus, setFiltroEstatus] = useState('');
+
+    const esAdmin = user?.rol === 'admin';
 
     const cargar = async () => {
         try {
-            const { data } = await obtenerEmpleados()
-            setEmpleados(Array.isArray(data) ? data : [])
+            const { data } = await obtenerEmpleados();
+            setEmpleados(Array.isArray(data) ? data : []);
         } catch (e) {
-            setError('No se puede cargar el listado de empleados')
+            setError('No se puede cargar el listado de empleados.');
         }
-    }
+    };
 
     useEffect(() => {
         const boot = async () => {
-            setCargando(true)
-            await cargar()
-            setCargando(false)
-        }
-        boot()
-    }, [])
+            setCargando(true);
+            await cargar();
+            setCargando(false);
+        };
+        boot();
+    }, []);
 
     const eliminar = async (idEmpleado) => {
-        const ok = window.confirm('¿Seguro que deseas eliminar este empleado?')
-        if (!ok) return
+        const ok = window.confirm('¿Seguro que deseas eliminar este empleado?');
+        if (!ok) return;
         
         try {
-            setEliminandoId(idEmpleado)
-            await eliminarEmpleado(idEmpleado)
-            await cargar()
+            setEliminandoId(idEmpleado);
+            await eliminarEmpleado(idEmpleado);
+            await cargar();
         } catch (e) {
-            alert('No se pudo eliminar el empleado.')
+            alert('No se pudo eliminar el empleado.');
         } finally {
-            setEliminandoId(null)
+            setEliminandoId(null);
         }
-    }
+    };
 
-    const totalEmpleados = empleados.length
-    const nominaTotal = empleados.reduce((acc, emp) => acc + Number(emp.sueldo), 0)
-    const sueldoPromedio = totalEmpleados > 0 ? (nominaTotal / totalEmpleados) : 0
+    // --- LECCIÓN DE JS: OBTENER DEPTOS ÚNICOS PARA EL FILTRO ---
+    const departamentosUnicos = Array.from(
+        new Set(empleados.map((e) => e.departamento).filter(Boolean))
+    );
 
+    // --- CALCULO DE METRICAS ---
+    const totalEmpleados = empleados.filter(e => e.estatus === 'Activo').length;
+    const nominaTotal = empleados.reduce((acc, emp) => acc + Number(emp.sueldo), 0);
+    const sueldoPromedio = empleados.length > 0 ? (nominaTotal / empleados.length) : 0;
+
+    // --- FILTRADO EN VIVO ---
     const empleadosFiltrados = empleados.filter((e) => {
-        const termino = busqueda.toLowerCase()
-        return (
-            e.nombre.toLowerCase().includes(termino) ||
-            e.departamento.toLowerCase().includes(termino)
-        )
-    })
+        const matchesBusqueda = 
+            e.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
+            e.puesto.toLowerCase().includes(busqueda.toLowerCase()) ||
+            e.departamento.toLowerCase().includes(busqueda.toLowerCase());
+            
+        const matchesDepto = filtroDepto ? e.departamento === filtroDepto : true;
+        const matchesEstatus = filtroEstatus ? e.estatus === filtroEstatus : true;
 
-    if (cargando) return <div className="text-center py-5"><p className="text-secondary">Cargando...</p></div>
-    if (error) return <div className="alert alert-danger my-4">{error}</div>
+        return matchesBusqueda && matchesDepto && matchesEstatus;
+    });
+
+    if (cargando) return <div className="text-center py-5"><p className="text-secondary">Cargando...</p></div>;
+    if (error) return <div className="alert alert-danger my-4">{error}</div>;
 
     return (
-        <div className="container-fluid px-0">
+        <div className="container-fluid px-0 animate-fade-in">
+            {/* Cabecera */}
+            <div className="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+                <div>
+                    <h1 className="text-dark mb-1">Directorio de Personal</h1>
+                    <p className="text-muted mb-0">Administra los perfiles, contratos y roles de tu equipo corporativo.</p>
+                </div>
+                {esAdmin && (
+                    <Link to="/agregar" className="btn btn-primary d-flex align-items-center gap-2">
+                        <UserPlus size={18} />
+                        Agregar Colaborador
+                    </Link>
+                )}
+            </div>
+
+            {/* Indicadores clave */}
             <div className="row g-4 mb-4">
                 <div className="col-md-4">
                     <div className="metric-card d-flex align-items-center justify-content-between">
                         <div>
-                            <div className="metric-title">Colaboradores Activos</div>
+                            <div className="metric-title">Empleados Activos</div>
                             <div className="metric-value">{totalEmpleados}</div>
                         </div>
-                        <Users size={36} className="text-indigo opacity-50" />
+                        <div className="metric-icon-wrapper">
+                            <Users size={32} />
+                        </div>
                     </div>
                 </div>
                 <div className="col-md-4">
-                    <div className="metric-card cyan d-flex align-items-center justify-content-between">
+                    <div className="metric-card d-flex align-items-center justify-content-between">
                         <div>
-                            <div className="metric-title">Nómina Mensual</div>
+                            <div className="metric-title">Presupuesto Mensual</div>
                             <div className="metric-value">
                                 <NumericFormat
                                     value={nominaTotal}
@@ -87,11 +123,13 @@ export default function ListadoEmpleados() {
                                 />
                             </div>
                         </div>
-                        <DollarSign size={36} className="text-info opacity-50" />
+                        <div className="metric-icon-wrapper">
+                            <DollarSign size={32} />
+                        </div>
                     </div>
                 </div>
                 <div className="col-md-4">
-                    <div className="metric-card d-flex align-items-center justify-content-between">
+                    <div className="metric-card terracotta d-flex align-items-center justify-content-between">
                         <div>
                             <div className="metric-title">Salario Promedio</div>
                             <div className="metric-value">
@@ -106,53 +144,80 @@ export default function ListadoEmpleados() {
                                 />
                             </div>
                         </div>
-                        <Activity size={36} className="text-warning opacity-50" />
+                        <div className="metric-icon-wrapper">
+                            <Activity size={32} />
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div className="row mb-4 align-items-center">
-                <div className="col-md-8 col-sm-12 mb-2 mb-md-0">
+            {/* Barra de busqueda y filtros */}
+            <div className="row mb-4 g-3 align-items-center">
+                {/* Cuadro de texto */}
+                <div className="col-lg-6 col-md-12">
                     <div className="position-relative">
                         <Search size={18} className="text-secondary position-absolute" style={{ left: '16px', top: '15px' }} />
                         <input
                             type="text"
                             className="form-control"
-                            placeholder="Buscar por nombre o departamento..."
+                            placeholder="Buscar por nombre, puesto o departamento..."
                             style={{ paddingLeft: '45px' }}
                             value={busqueda}
                             onChange={(e) => setBusqueda(e.target.value)}
                         />
                     </div>
                 </div>
-                <div className="col-md-4 col-sm-12 text-md-end">
-                    <Link to="/agregar" className="btn btn-primary w-100 w-md-auto d-flex align-items-center justify-content-center gap-2">
-                        <UserPlus size={18} />
-                        Agregar Colaborador
-                    </Link>
+                
+                {/* Selector de Departamento */}
+                <div className="col-lg-3 col-md-6">
+                    <select 
+                        className="form-select"
+                        value={filtroDepto}
+                        onChange={(e) => setFiltroDepto(e.target.value)}
+                    >
+                        <option value="">Todos los Departamentos</option>
+                        {departamentosUnicos.map((depto, idx) => (
+                            <option key={idx} value={depto}>{depto}</option>
+                        ))}
+                    </select>
+                </div>
+
+                {/* Selector de Estatus */}
+                <div className="col-lg-3 col-md-6">
+                    <select 
+                        className="form-select"
+                        value={filtroEstatus}
+                        onChange={(e) => setFiltroEstatus(e.target.value)}
+                    >
+                        <option value="">Todos los Estatus</option>
+                        <option value="Activo">Activo</option>
+                        <option value="Inactivo">Inactivo</option>
+                        <option value="Suspendido">Suspendido</option>
+                    </select>
                 </div>
             </div>
 
-            {/* 📄 LA TABLA */}
+            {/* La tabla */}
             <div className="card">
                 <div className="card-header">
-                    Listado de Personal
+                    Listado de Personal Corporativo
                 </div>
                 <div className="card-body p-0">
                     {empleadosFiltrados.length === 0 ? (
                         <div className="p-5 text-center">
-                            <p className="mb-0 text-secondary">No se encontraron colaboradores registrados</p>
+                            <p className="mb-0 text-secondary">No se encontraron empleados con las condiciones especificadas.</p>
                         </div>
                     ) : (
                         <div className="table-responsive">
                             <table className="table table-hover align-middle">
                                 <thead>
                                     <tr>
-                                        <th style={{ width: 100 }}>ID</th>
-                                        <th>Nombre Completo</th>
-                                        <th>Departamento / Área</th>
-                                        <th style={{ width: 180 }}>Sueldo Mensual</th>
-                                        <th style={{ width: 180 }} className="text-end">Acciones</th>
+                                        <th style={{ width: 80 }}>ID</th>
+                                        <th>Empleado</th>
+                                        <th>Puesto / Área</th>
+                                        <th>Sueldo Mensual</th>
+                                        <th>Estatus</th>
+                                        {esAdmin && <th style={{ width: 180 }} className="text-end">Acciones</th>}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -160,12 +225,30 @@ export default function ListadoEmpleados() {
                                         <tr key={e.idEmpleado}>
                                             <td className="text-secondary font-monospace">#{e.idEmpleado}</td>
                                             <td>
-                                                <span className="fw-semibold text-light">{e.nombre}</span>
+                                                <div className="d-flex align-items-center gap-3">
+                                                    {e.foto_perfil ? (
+                                                        <img 
+                                                            src={e.foto_perfil} 
+                                                            alt="perfil" 
+                                                            className="rounded-circle"
+                                                            style={{ width: '40px', height: '40px', objectFit: 'cover' }}
+                                                        />
+                                                    ) : (
+                                                        <div className="rounded-circle bg-light d-flex align-items-center justify-content-center fw-bold text-primary" style={{ width: '40px', height: '40px' }}>
+                                                            {e.nombre.charAt(0)}
+                                                        </div>
+                                                    )}
+                                                    <div>
+                                                        <div className="fw-semibold">{e.nombre}</div>
+                                                        <div className="small text-secondary">{e.correo_corporativo || 'Sin correo registrado'}</div>
+                                                    </div>
+                                                </div>
                                             </td>
                                             <td>
-                                                <span className="badge bg-secondary-subtle text-light-emphasis px-2.5 py-1.5 border border-white-5">
-                                                    {e.departamento}
-                                                </span>
+                                                <div>
+                                                    <div className="fw-medium">{e.puesto}</div>
+                                                    <div className="small text-secondary">{e.departamento}</div>
+                                                </div>
                                             </td>
                                             <td>
                                                 <strong className="text-info">
@@ -180,21 +263,34 @@ export default function ListadoEmpleados() {
                                                     />
                                                 </strong>
                                             </td>
-                                            <td className="text-end">
-                                                <Link to={`/editar/${e.idEmpleado}`} className="btn btn-sm btn-outline-light border-0 me-2 py-1.5 px-3 d-inline-flex align-items-center gap-1.5">
-                                                    <Edit3 size={14} />
-                                                    Editar
-                                                </Link>
-                                                <button 
-                                                    type="button"
-                                                    className="btn btn-sm btn-outline-danger border-0 py-1.5 px-3 d-inline-flex align-items-center gap-1.5"
-                                                    onClick={() => eliminar(e.idEmpleado)}
-                                                    disabled={eliminandoId === e.idEmpleado}
-                                                >
-                                                    <Trash2 size={14} />
-                                                    {eliminandoId === e.idEmpleado ? 'Eliminando...' : 'Eliminar'}
-                                                </button>
+                                            <td>
+                                                {e.estatus === 'Activo' && (
+                                                    <span className="badge-minimal active">Activo</span>
+                                                )}
+                                                {e.estatus === 'Inactivo' && (
+                                                    <span className="badge-minimal inactive">Inactivo</span>
+                                                )}
+                                                {e.estatus === 'Suspendido' && (
+                                                    <span className="badge-minimal suspended">Suspendido</span>
+                                                )}
                                             </td>
+                                            {esAdmin && (
+                                                <td className="text-end">
+                                                    <Link to={`/editar/${e.idEmpleado}`} className="btn btn-sm btn-outline-light border-0 me-2 py-1.5 px-3 d-inline-flex align-items-center gap-1.5">
+                                                        <Edit3 size={14} />
+                                                        Editar
+                                                    </Link>
+                                                    <button 
+                                                        type="button"
+                                                        className="btn btn-sm btn-outline-danger border-0 py-1.5 px-3 d-inline-flex align-items-center gap-1.5"
+                                                        onClick={() => eliminar(e.idEmpleado)}
+                                                        disabled={eliminandoId === e.idEmpleado}
+                                                    >
+                                                        <Trash2 size={14} />
+                                                        {eliminandoId === e.idEmpleado ? 'Eliminando...' : 'Eliminar'}
+                                                    </button>
+                                                </td>
+                                            )}
                                         </tr>
                                     ))}
                                 </tbody>
@@ -204,5 +300,5 @@ export default function ListadoEmpleados() {
                 </div>
             </div>
         </div>
-    )
+    );
 }
