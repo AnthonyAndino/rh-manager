@@ -1,8 +1,8 @@
 import axios from 'axios'
 import { urlBase } from '../config'
 
-// urlBase = 'http://localhost:8000/api/empleados'
-// apiRoot = 'http://localhost:8000'
+// urlBase = '/api/empleados'
+// apiRoot = '' (vite proxy => http://localhost:8000)
 const apiRoot = urlBase.substring(0, urlBase.lastIndexOf('/api/'))
 
 // ─── EMPLEADOS ────────────────────────────────────────────────────────────────

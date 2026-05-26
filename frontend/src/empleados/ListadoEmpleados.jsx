@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { NumericFormat } from 'react-number-format';
 import { Link } from "react-router-dom";
 import { obtenerEmpleados, eliminarEmpleado } from './empleadosApi';
 import { useAuth } from '../AuthContext';
-import { Users, DollarSign, Activity, Search, UserPlus, Edit3, Trash2, ShieldAlert } from 'lucide-react';
+import ScrollableTable from '../components/ScrollableTable';
+import TomSelect from '../components/TomSelect';
+import { Users, DollarSign, Activity, Search, UserPlus, Edit3, Trash2 } from 'lucide-react';
 
 export default function ListadoEmpleados() {
     const { user } = useAuth();
@@ -24,6 +26,7 @@ export default function ListadoEmpleados() {
             const { data } = await obtenerEmpleados();
             setEmpleados(Array.isArray(data) ? data : []);
         } catch (e) {
+            console.error("Error al cargar empleados:", e);
             setError('No se puede cargar el listado de empleados.');
         }
     };
@@ -46,6 +49,7 @@ export default function ListadoEmpleados() {
             await eliminarEmpleado(idEmpleado);
             await cargar();
         } catch (e) {
+            console.error("Error al eliminar empleado:", e);
             alert('No se pudo eliminar el empleado.');
         } finally {
             setEliminandoId(null);
@@ -56,6 +60,16 @@ export default function ListadoEmpleados() {
     const departamentosUnicos = Array.from(
         new Set(empleados.map((e) => e.departamento).filter(Boolean))
     );
+    const deptosOptions = useMemo(() => [
+        { value: '', text: 'Todos los Departamentos' },
+        ...departamentosUnicos.map((d) => ({ value: d, text: d })),
+    ], [departamentosUnicos]);
+    const estatusOptions = useMemo(() => [
+        { value: '', text: 'Todos los Estatus' },
+        { value: 'Activo', text: 'Activo' },
+        { value: 'Inactivo', text: 'Inactivo' },
+        { value: 'Suspendido', text: 'Suspendido' },
+    ], []);
 
     // --- CALCULO DE METRICAS ---
     const totalEmpleados = empleados.filter(e => e.estatus === 'Activo').length;
@@ -169,30 +183,22 @@ export default function ListadoEmpleados() {
                 
                 {/* Selector de Departamento */}
                 <div className="col-lg-3 col-md-6">
-                    <select 
-                        className="form-select"
+                    <TomSelect
                         value={filtroDepto}
                         onChange={(e) => setFiltroDepto(e.target.value)}
-                    >
-                        <option value="">Todos los Departamentos</option>
-                        {departamentosUnicos.map((depto, idx) => (
-                            <option key={idx} value={depto}>{depto}</option>
-                        ))}
-                    </select>
+                        options={deptosOptions}
+                        placeholder="Todos los Departamentos"
+                    />
                 </div>
 
                 {/* Selector de Estatus */}
                 <div className="col-lg-3 col-md-6">
-                    <select 
-                        className="form-select"
+                    <TomSelect
                         value={filtroEstatus}
                         onChange={(e) => setFiltroEstatus(e.target.value)}
-                    >
-                        <option value="">Todos los Estatus</option>
-                        <option value="Activo">Activo</option>
-                        <option value="Inactivo">Inactivo</option>
-                        <option value="Suspendido">Suspendido</option>
-                    </select>
+                        options={estatusOptions}
+                        placeholder="Todos los Estatus"
+                    />
                 </div>
             </div>
 
@@ -207,6 +213,7 @@ export default function ListadoEmpleados() {
                             <p className="mb-0 text-secondary">No se encontraron empleados con las condiciones especificadas.</p>
                         </div>
                     ) : (
+                        <ScrollableTable>
                         <div className="table-responsive">
                             <table className="table table-hover align-middle">
                                 <thead>
@@ -295,6 +302,7 @@ export default function ListadoEmpleados() {
                                 </tbody>
                             </table>
                         </div>
+                        </ScrollableTable>
                     )}
                 </div>
             </div>

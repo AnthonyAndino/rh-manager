@@ -41,6 +41,7 @@ export default function EditarEmpleado() {
                     foto_perfil: data?.foto_perfil ?? null
                 });
             } catch (e) {
+                console.error("Error al cargar colaborador:", e);
                 setError('No se pudo cargar el empleado');
             } finally {
                 setCargando(false);

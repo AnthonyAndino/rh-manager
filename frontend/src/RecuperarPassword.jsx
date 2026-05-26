@@ -21,7 +21,7 @@ export default function RecuperarPassword() {
 
         try {
             setCargando(true);
-            const res = await axios.post('http://localhost:8000/api/auth/recover-password', { email });
+            const res = await axios.post('/api/auth/recover-password', { email });
             setMensaje(res.data.message);
             setEmail('');
         } catch (err) {

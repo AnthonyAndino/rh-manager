@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
 from empleados.models import Empleado, Asistencia, Nomina, UserProfile, ConfiguracionNomina
-from datetime import date, timedelta, datetime
+from datetime import date, timedelta
 from decimal import Decimal
 import random
 
@@ -12,7 +12,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write('Poblando base de datos con datos demo...')
 
-        # Limpiar datos existentes para evitar duplicados
         Nomina.objects.all().delete()
         Asistencia.objects.all().delete()
         Empleado.objects.all().delete()
@@ -20,36 +19,54 @@ class Command(BaseCommand):
         User.objects.filter(is_superuser=False).delete()
         ConfiguracionNomina.objects.all().delete()
 
-        # --- Usuario admin ---
         admin_user, _ = User.objects.get_or_create(username='admin')
         admin_user.set_password('admin123')
         admin_user.email = 'admin@rhmanager.com'
         admin_user.save()
         UserProfile.objects.get_or_create(user=admin_user, defaults={'rol': 'admin'})
 
-        # --- Usuario empleado ---
-        emp_user, _ = User.objects.get_or_create(username='empleado1')
-        emp_user.set_password('empleado123')
-        emp_user.email = 'empleado1@rhmanager.com'
-        emp_user.save()
-        UserProfile.objects.get_or_create(user=emp_user, defaults={'rol': 'empleado'})
+        emp_user1, _ = User.objects.get_or_create(username='empleado1')
+        emp_user1.set_password('empleado123')
+        emp_user1.email = 'empleado1@rhmanager.com'
+        emp_user1.save()
+        UserProfile.objects.get_or_create(user=emp_user1, defaults={'rol': 'empleado'})
 
-        # --- Empleados demo ---
+        emp_user2, _ = User.objects.get_or_create(username='empleado2')
+        emp_user2.set_password('empleado123')
+        emp_user2.email = 'empleado2@rhmanager.com'
+        emp_user2.save()
+        UserProfile.objects.get_or_create(user=emp_user2, defaults={'rol': 'empleado'})
+
         empleados_data = [
-            {'nombre': 'Carlos Mendoza', 'departamento': 'Tecnologia', 'sueldo': 45000, 'puesto': 'Desarrollador Senior', 'estatus': 'Activo', 'correo': 'carlos.mendoza@rhmanager.com'},
-            {'nombre': 'Ana Lucia Perez', 'departamento': 'Tecnologia', 'sueldo': 38000, 'puesto': 'Desarrolladora Full Stack', 'estatus': 'Activo', 'correo': 'ana.perez@rhmanager.com'},
-            {'nombre': 'Roberto Gomez', 'departamento': 'Recursos Humanos', 'sueldo': 32000, 'puesto': 'Reclutador Senior', 'estatus': 'Activo', 'correo': 'roberto.gomez@rhmanager.com'},
-            {'nombre': 'Maria Fernanda Lopez', 'departamento': 'Contabilidad', 'sueldo': 35000, 'puesto': 'Contadora General', 'estatus': 'Activo', 'correo': 'maria.lopez@rhmanager.com'},
-            {'nombre': 'Jose Daniel Martinez', 'departamento': 'Ventas', 'sueldo': 28000, 'puesto': 'Ejecutivo de Ventas', 'estatus': 'Activo', 'correo': 'jose.martinez@rhmanager.com'},
-            {'nombre': 'Laura Jimenez', 'departamento': 'Marketing', 'sueldo': 31000, 'puesto': 'Coordinadora de Marketing', 'estatus': 'Activo', 'correo': 'laura.jimenez@rhmanager.com'},
-            {'nombre': 'Pedro Ramirez', 'departamento': 'Tecnologia', 'sueldo': 42000, 'puesto': 'Arquitecto de Software', 'estatus': 'Activo', 'correo': 'pedro.ramirez@rhmanager.com'},
-            {'nombre': 'Sofia Torres', 'departamento': 'Recursos Humanos', 'sueldo': 29000, 'puesto': 'Asistente de RH', 'estatus': 'Activo', 'correo': 'sofia.torres@rhmanager.com'},
-            {'nombre': 'Diego Hernandez', 'departamento': 'Contabilidad', 'sueldo': 26000, 'puesto': 'Auxiliar Contable', 'estatus': 'Inactivo', 'correo': 'diego.hernandez@rhmanager.com'},
-            {'nombre': 'Valentina Rojas', 'departamento': 'Ventas', 'sueldo': 34000, 'puesto': 'Gerente de Ventas', 'estatus': 'Activo', 'correo': 'valentina.rojas@rhmanager.com'},
+            {'nombre': 'Carlos Mendoza',           'departamento': 'Tecnologia',        'sueldo': 45000, 'puesto': 'Desarrollador Senior',          'estatus': 'Activo',   'correo': 'carlos.mendoza@rhmanager.com',        'telefono': '809-555-1001'},
+            {'nombre': 'Ana Lucia Perez',          'departamento': 'Tecnologia',        'sueldo': 38000, 'puesto': 'Desarrolladora Full Stack',     'estatus': 'Activo',   'correo': 'ana.perez@rhmanager.com',           'telefono': '809-555-1002'},
+            {'nombre': 'Roberto Gomez',            'departamento': 'Recursos Humanos',  'sueldo': 32000, 'puesto': 'Reclutador Senior',             'estatus': 'Activo',   'correo': 'roberto.gomez@rhmanager.com',       'telefono': '809-555-1003'},
+            {'nombre': 'Maria Fernanda Lopez',     'departamento': 'Contabilidad',      'sueldo': 35000, 'puesto': 'Contadora General',             'estatus': 'Activo',   'correo': 'maria.lopez@rhmanager.com',         'telefono': '809-555-1004'},
+            {'nombre': 'Jose Daniel Martinez',     'departamento': 'Ventas',            'sueldo': 28000, 'puesto': 'Ejecutivo de Ventas',          'estatus': 'Activo',   'correo': 'jose.martinez@rhmanager.com',       'telefono': '809-555-1005'},
+            {'nombre': 'Laura Jimenez',            'departamento': 'Marketing',         'sueldo': 31000, 'puesto': 'Coordinadora de Marketing',     'estatus': 'Activo',   'correo': 'laura.jimenez@rhmanager.com',       'telefono': '809-555-1006'},
+            {'nombre': 'Pedro Ramirez',            'departamento': 'Tecnologia',        'sueldo': 42000, 'puesto': 'Arquitecto de Software',       'estatus': 'Activo',   'correo': 'pedro.ramirez@rhmanager.com',       'telefono': '809-555-1007'},
+            {'nombre': 'Sofia Torres',             'departamento': 'Recursos Humanos',  'sueldo': 29000, 'puesto': 'Asistente de RH',              'estatus': 'Activo',   'correo': 'sofia.torres@rhmanager.com',        'telefono': '809-555-1008'},
+            {'nombre': 'Diego Hernandez',          'departamento': 'Contabilidad',      'sueldo': 26000, 'puesto': 'Auxiliar Contable',            'estatus': 'Inactivo', 'correo': 'diego.hernandez@rhmanager.com',     'telefono': '809-555-1009'},
+            {'nombre': 'Valentina Rojas',          'departamento': 'Ventas',            'sueldo': 34000, 'puesto': 'Gerente de Ventas',            'estatus': 'Activo',   'correo': 'valentina.rojas@rhmanager.com',      'telefono': '809-555-1010'},
+            {'nombre': 'Andres Felipe Castro',     'departamento': 'Logistica',         'sueldo': 27000, 'puesto': 'Coordinador de Logistica',     'estatus': 'Activo',   'correo': 'andres.castro@rhmanager.com',       'telefono': '809-555-1011'},
+            {'nombre': 'Carolina Mejia',           'departamento': 'Logistica',         'sueldo': 24000, 'puesto': 'Analista de Inventarios',       'estatus': 'Activo',   'correo': 'carolina.mejia@rhmanager.com',       'telefono': '809-555-1012'},
+            {'nombre': 'Fernando Ortiz',           'departamento': 'Servicio al Cliente','sueldo': 22000,'puesto': 'Representante de Servicio',    'estatus': 'Activo',   'correo': 'fernando.ortiz@rhmanager.com',       'telefono': '809-555-1013'},
+            {'nombre': 'Gabriela Reyes',           'departamento': 'Servicio al Cliente','sueldo': 23000,'puesto': 'Supervisora de Servicio',       'estatus': 'Activo',   'correo': 'gabriela.reyes@rhmanager.com',       'telefono': '809-555-1014'},
+            {'nombre': 'Hector Delgado',           'departamento': 'Diseño',            'sueldo': 36000, 'puesto': 'Disenador UX/UI',              'estatus': 'Activo',   'correo': 'hector.delgado@rhmanager.com',       'telefono': '809-555-1015'},
+            {'nombre': 'Isabela Morales',          'departamento': 'Diseño',            'sueldo': 33000, 'puesto': 'Disenadora Grafica',           'estatus': 'Activo',   'correo': 'isabela.morales@rhmanager.com',      'telefono': '809-555-1016'},
+            {'nombre': 'Javier Santana',           'departamento': 'Administracion',    'sueldo': 40000, 'puesto': 'Gerente Administrativo',        'estatus': 'Activo',   'correo': 'javier.santana@rhmanager.com',       'telefono': '809-555-1017'},
+            {'nombre': 'Karen Paredes',            'departamento': 'Administracion',    'sueldo': 25000, 'puesto': 'Asistente Administrativa',      'estatus': 'Activo',   'correo': 'karen.paredes@rhmanager.com',        'telefono': '809-555-1018'},
+            {'nombre': 'Luis Miguel Torres',       'departamento': 'Tecnologia',        'sueldo': 48000, 'puesto': 'Ingeniero de DevOps',           'estatus': 'Activo',   'correo': 'luis.torres@rhmanager.com',          'telefono': '809-555-1019'},
+            {'nombre': 'Monica Guerrero',          'departamento': 'Marketing',         'sueldo': 30000, 'puesto': 'Especialista en Redes Sociales','estatus': 'Suspendido','correo': 'monica.guerrero@rhmanager.com',       'telefono': '809-555-1020'},
+            {'nombre': 'Nelson Pena',              'departamento': 'Ventas',            'sueldo': 26000, 'puesto': 'Ejecutivo de Cuentas Clave',    'estatus': 'Activo',   'correo': 'nelson.pena@rhmanager.com',          'telefono': '809-555-1021'},
+            {'nombre': 'Olivia Sandoval',          'departamento': 'Recursos Humanos',  'sueldo': 34000, 'puesto': 'Especialista en Nominas',       'estatus': 'Activo',   'correo': 'olivia.sandoval@rhmanager.com',      'telefono': '809-555-1022'},
+            {'nombre': 'Pablo Estrada',            'departamento': 'Logistica',         'sueldo': 31000, 'puesto': 'Jefe de Almacen',              'estatus': 'Activo',   'correo': 'pablo.estrada@rhmanager.com',        'telefono': '809-555-1023'},
+            {'nombre': 'Raquel Fernandez',         'departamento': 'Contabilidad',      'sueldo': 29000, 'puesto': 'Analista Financiera',           'estatus': 'Inactivo', 'correo': 'raquel.fernandez@rhmanager.com',      'telefono': '809-555-1024'},
+            {'nombre': 'Samuel Cruz',              'departamento': 'Tecnologia',        'sueldo': 35000, 'puesto': 'Administrador de BD',           'estatus': 'Activo',   'correo': 'samuel.cruz@rhmanager.com',          'telefono': '809-555-1025'},
         ]
 
         empleados_creados = []
-        for data in empleados_data:
+        for idx, data in enumerate(empleados_data):
             emp, created = Empleado.objects.get_or_create(
                 correo_corporativo=data['correo'],
                 defaults={
@@ -58,39 +75,35 @@ class Command(BaseCommand):
                     'sueldo': data['sueldo'],
                     'puesto': data['puesto'],
                     'estatus': data['estatus'],
-                    'fecha_contratacion': date(2025, random.randint(1, 12), random.randint(1, 28)),
+                    'telefono': data['telefono'],
+                    'fecha_contratacion': date(2024, random.randint(1, 12), random.randint(1, 28)),
                 }
             )
             empleados_creados.append(emp)
 
-        # Vincular el usuario empleado al primer empleado
         if empleados_creados:
-            emp_user.empleado = empleados_creados[0]
-            emp_user.save()
+            emp_user1.empleado = empleados_creados[0]
+            emp_user1.save()
+            emp_user2.empleado = empleados_creados[2]
+            emp_user2.save()
 
-        # --- Configuracion de nomina ---
         ConfiguracionNomina.objects.create(
             porcentaje_deduccion=Decimal('10.00'),
             bono_fijo=Decimal('120.00'),
         )
 
-        # --- Asistencias demo (ultimos 30 dias) ---
         hoy = date.today()
         empleados_activos = Empleado.objects.filter(estatus='Activo')
         for emp in empleados_activos:
-            for dias_atras in range(30):
+            for dias_atras in range(60):
                 dia = hoy - timedelta(days=dias_atras)
                 if dia.weekday() >= 5:
-                    continue  # Saltar fines de semana
-                if random.random() < 0.15:
-                    continue  # 15% de ausentismo
+                    continue
+                if random.random() < 0.12:
+                    continue
 
                 hora_ent = f'{random.randint(7, 9):02d}:{random.randint(0, 59):02d}:00'
-                if hora_ent > '09:00:00':
-                    estado = 'Retardo'
-                else:
-                    estado = 'A Tiempo'
-
+                estado = 'Retardo' if hora_ent > '09:00:00' else 'A Tiempo'
                 hora_sal = f'{random.randint(16, 18):02d}:{random.randint(0, 59):02d}:00'
 
                 Asistencia.objects.get_or_create(
@@ -103,16 +116,19 @@ class Command(BaseCommand):
                     }
                 )
 
-        # --- Nominas demo (ultimos 3 meses) ---
         for emp in empleados_activos:
-            for mes in range(3):
-                fecha_pago = date(hoy.year, hoy.month - mes, 1) - timedelta(days=1)
+            for mes in range(6):
+                referencia = date(hoy.year, hoy.month, 1)
+                for _ in range(mes):
+                    referencia = referencia.replace(day=1) - timedelta(days=1)
+                fecha_pago = referencia.replace(day=1) - timedelta(days=1)
                 if fecha_pago > hoy:
                     continue
                 sueldo_base = emp.sueldo
-                deducciones = sueldo_base * Decimal('0.10')
-                bonos = Decimal('120.00')
-                sueldo_neto = sueldo_base - deducciones + bonos
+                deduccion_pct = Decimal(str(random.uniform(8, 14))).quantize(Decimal('0.01'))
+                deducciones = (sueldo_base * deduccion_pct / Decimal('100')).quantize(Decimal('0.01'))
+                bonos = Decimal(str(random.randint(80, 200))).quantize(Decimal('0.01'))
+                sueldo_neto = (sueldo_base - deducciones + bonos).quantize(Decimal('0.01'))
 
                 Nomina.objects.get_or_create(
                     empleado=emp,

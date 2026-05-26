@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../AuthContext';
 import { obtenerNominas, generarNominaMensual, obtenerConfiguracionNomina, guardarConfiguracionNomina } from './empleadosApi';
+import ScrollableTable from '../components/ScrollableTable';
 import { NumericFormat } from 'react-number-format';
-import { DollarSign, Calendar, TrendingUp, Settings, PlusCircle, AlertCircle } from 'lucide-react';
+import DatePicker from '../components/DatePicker';
+import { DollarSign, TrendingUp, Settings, AlertCircle } from 'lucide-react';
 
 export default function ControlNominas() {
     const { user } = useAuth();
@@ -70,6 +72,7 @@ export default function ControlNominas() {
             setMensaje({ texto: '¡Configuración de nómina actualizada con éxito!', tipo: 'success' });
             await cargarDatos();
         } catch (err) {
+            console.error("Error al guardar configuración:", err);
             setMensaje({ texto: 'No se pudo guardar la configuración.', tipo: 'danger' });
         } finally {
             setGuardandoConfig(false);
@@ -163,20 +166,18 @@ export default function ControlNominas() {
                         </div>
                     </div>
 
-                    {/* Panel 2: Disparar calculo de nomina (Stored Procedure) */}
+                    {/* Panel 2: Generar nómina mensual */}
                     <div className="col-md-6">
                         <div className="card">
                             <div className="card-header d-flex align-items-center gap-2">
                                 <TrendingUp className="text-primary" size={18} />
-                                <span>Ejecutar Cálculo Mensual (Stored Procedure)</span>
+                                <span>Generar Nómina del Mes</span>
                             </div>
                             <div className="card-body">
                                 <form onSubmit={handleGenerarNomina}>
                                     <div className="mb-3">
-                                        <label className="form-label">Fecha de Pago</label>
-                                        <input 
-                                            type="date"
-                                            className="form-control"
+                                        <DatePicker
+                                            label="Fecha de Pago"
                                             value={fechaPago}
                                             onChange={(e) => setFechaPago(e.target.value)}
                                         />
@@ -187,11 +188,11 @@ export default function ControlNominas() {
                                         disabled={generandoNomina}
                                     >
                                         <DollarSign size={18} />
-                                        {generandoNomina ? 'Calculando en MySQL...' : 'Calcular Nómina de Empleados'}
+                                        {generandoNomina ? 'Generando Nóminas...' : 'Calcular Nómina de Empleados'}
                                     </button>
                                 </form>
                                 <div className="mt-3 text-secondary small text-center">
-                                    Esta acción activa el Stored Procedure de MySQL que calcula la nómina masiva.
+                                    Se calcularán automáticamente los sueldos, deducciones y bonos de todos los empleados activos para el periodo seleccionado.
                                 </div>
                             </div>
                         </div>
@@ -219,6 +220,7 @@ export default function ControlNominas() {
                             <p className="text-secondary mb-0">No se han encontrado registros de nómina calculados.</p>
                         </div>
                     ) : (
+                        <ScrollableTable>
                         <div className="table-responsive">
                             <table className="table table-hover align-middle">
                                 <thead>
@@ -234,7 +236,7 @@ export default function ControlNominas() {
                                 <tbody>
                                     {nominas.map((nom) => (
                                         <tr key={nom.idNomina}>
-                                            <td className="fw-semibold text-light">{nom.nombre_empleado}</td>
+                                            <td className="fw-semibold">{nom.nombre_empleado}</td>
                                             <td className="text-secondary">{nom.fecha_pago}</td>
                                             <td>
                                                 <NumericFormat
@@ -288,6 +290,7 @@ export default function ControlNominas() {
                                 </tbody>
                             </table>
                         </div>
+                        </ScrollableTable>
                     )}
                 </div>
             </div>

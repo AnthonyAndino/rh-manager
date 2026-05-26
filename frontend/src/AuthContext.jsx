@@ -1,33 +1,30 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+/* eslint-disable react-refresh/only-export-components */
+import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
 const AuthContext = createContext();
 
+const initialToken = localStorage.getItem('user_token');
+if (initialToken) {
+    axios.defaults.headers.common['Authorization'] = `Token ${initialToken}`;
+}
+
 export function AuthProvider({ children }) {
-    const [user, setUser] = useState(null);
-    const [token, setToken] = useState(localStorage.getItem('user_token') || null);
-    const [cargando, setCargando] = useState(true);
-
-    useEffect(() => {
-        if (token) {
-            axios.defaults.headers.common['Authorization'] = `Token ${token}`;
-            const localUser = localStorage.getItem('user_data');
-            if (localUser) {
-                setUser(JSON.parse(localUser));
+    const [token, setToken] = useState(() => localStorage.getItem('user_token') || null);
+    const [user, setUser] = useState(() => {
+        const localUser = localStorage.getItem('user_data');
+        if (localUser) {
+            try {
+                return JSON.parse(localUser);
+            } catch (e) {
+                console.error("Error parsing user_data from localStorage on initialization:", e);
+                localStorage.removeItem('user_data');
             }
-        } else {
-            delete axios.defaults.headers.common['Authorization'];
         }
-        setCargando(false);
-    }, [token]);
-
-    const login = (newToken, userData) => {
-        setToken(newToken);
-        setUser(userData);
-        localStorage.setItem('user_token', newToken);
-        localStorage.setItem('user_data', JSON.stringify(userData));
-        axios.defaults.headers.common['Authorization'] = `Token ${newToken}`;
-    };
+        return null;
+    });
+    const [cargando] = useState(false);
+    const logoutRef = useRef(null);
 
     const logout = () => {
         setToken(null);
@@ -35,6 +32,39 @@ export function AuthProvider({ children }) {
         localStorage.removeItem('user_token');
         localStorage.removeItem('user_data');
         delete axios.defaults.headers.common['Authorization'];
+    };
+
+    useEffect(() => {
+        logoutRef.current = logout;
+    });
+
+    useEffect(() => {
+        if (token) {
+            axios.defaults.headers.common['Authorization'] = `Token ${token}`;
+        } else {
+            delete axios.defaults.headers.common['Authorization'];
+        }
+    }, [token]);
+
+    useEffect(() => {
+        const interceptor = axios.interceptors.response.use(
+            response => response,
+            error => {
+                if (error.response?.status === 401 && logoutRef.current) {
+                    logoutRef.current();
+                }
+                return Promise.reject(error);
+            }
+        );
+        return () => axios.interceptors.response.eject(interceptor);
+    }, []);
+
+    const login = (newToken, userData) => {
+        setToken(newToken);
+        setUser(userData);
+        localStorage.setItem('user_token', newToken);
+        localStorage.setItem('user_data', JSON.stringify(userData));
+        axios.defaults.headers.common['Authorization'] = `Token ${newToken}`;
     };
 
     const value = {

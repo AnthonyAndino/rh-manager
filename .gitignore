@@ -24,3 +24,8 @@ dist/
 Thumbs.db
 *.log
 
+# Windows reserved device names
+nul
+NUL
+Nul
+

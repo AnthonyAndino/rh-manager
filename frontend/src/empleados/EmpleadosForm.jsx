@@ -1,4 +1,6 @@
+import { useMemo } from 'react';
 import { NumericFormat } from 'react-number-format';
+import TomSelect from '../components/TomSelect';
 import { Calendar, User, Mail, Phone, Image, Award, ToggleLeft } from 'lucide-react';
 
 export default function EmpleadoForm({
@@ -9,6 +11,11 @@ export default function EmpleadoForm({
     onSubmit,
     onCancel,
 }) {
+    const estatusOptions = useMemo(() => [
+        { value: 'Activo', text: 'Activo' },
+        { value: 'Inactivo', text: 'Inactivo' },
+        { value: 'Suspendido', text: 'Suspendido' },
+    ], []);
     const handleFileChange = (e) => {
         if (e.target.files && e.target.files[0]) {
             onChange('foto_perfil', e.target.files[0]);
@@ -130,15 +137,12 @@ export default function EmpleadoForm({
             {/* Campo Estatus */}
             <div className="col-md-6">
                 <label className="form-label">Estatus de Servicio</label>
-                <select 
-                    className="form-select"
+                <TomSelect
                     value={empleado.estatus}
                     onChange={(e) => onChange('estatus', e.target.value)}
-                >
-                    <option value="Activo">Activo</option>
-                    <option value="Inactivo">Inactivo</option>
-                    <option value="Suspendido">Suspendido</option>
-                </select>
+                    options={estatusOptions}
+                    placeholder="Seleccionar estatus"
+                />
             </div>
 
             {/* Campo Foto de Perfil */}

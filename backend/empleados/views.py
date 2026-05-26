@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
-from django.db.models import Sum
+from django.db.models import Sum, Count
 from datetime import date
 from .models import Empleado, Asistencia, Nomina, UserProfile, ConfiguracionNomina
 from .serializers import (
@@ -186,6 +186,8 @@ class DashboardAPIView(APIView):
                 fecha_pago__year=anio_actual
             ).aggregate(total=Sum('sueldo_neto'))['total'] or 0.00
 
+            empleados_por_departamento = Empleado.objects.values('departamento').annotate(cantidad=Count('idEmpleado')).order_by('departamento')
+
             ultimas_asistencias = Asistencia.objects.filter(fecha=hoy).order_by('-hora_entrada')[:5]
             if len(ultimas_asistencias) == 0:
                 # Si no hay hoy, mostramos las últimas 5 generales
@@ -197,6 +199,7 @@ class DashboardAPIView(APIView):
                 'asistencias_hoy': asistencias_hoy,
                 'retardos_hoy': retardos_hoy,
                 'nomina_pagada_mes': float(nomina_pagada),
+                'empleados_por_departamento': list(empleados_por_departamento),
                 'ultimas_asistencias': AsistenciaSerializer(ultimas_asistencias, many=True).data
             })
 

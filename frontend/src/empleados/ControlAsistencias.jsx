@@ -1,7 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useAuth } from '../AuthContext';
 import { obtenerEmpleados, obtenerAsistencias, registrarEntrada, registrarSalida } from './empleadosApi';
-import { Clock, CheckCircle, AlertTriangle, UserCheck, Calendar, Download, RefreshCw } from 'lucide-react';
+import ScrollableTable from '../components/ScrollableTable';
+import TomSelect from '../components/TomSelect';
+import DatePicker from '../components/DatePicker';
+import { Clock, UserCheck, Download } from 'lucide-react';
 
 export default function ControlAsistencias() {
     const { user } = useAuth();
@@ -20,6 +23,22 @@ export default function ControlAsistencias() {
     const [fechaFin, setFechaFin] = useState('');
 
     const esEmpleado = user?.rol === 'empleado';
+
+    const empleadosOptions = useMemo(() => [
+        { value: '', text: '-- Selecciona --' },
+        ...empleados.map((emp) => ({
+            value: String(emp.idEmpleado),
+            text: `${emp.nombre} (${emp.puesto})`,
+        })),
+    ], [empleados]);
+
+    const filtroEmpleadosOptions = useMemo(() => [
+        { value: '', text: 'Filtrar Empleado' },
+        ...empleados.map((emp) => ({
+            value: String(emp.idEmpleado),
+            text: emp.nombre,
+        })),
+    ], [empleados]);
 
     const cargarDatos = async () => {
         try {
@@ -234,18 +253,12 @@ export default function ControlAsistencias() {
                             {!esEmpleado && (
                                 <div className="mb-4">
                                     <label className="form-label">Colaborador</label>
-                                    <select 
-                                        className="form-select"
+                                    <TomSelect
                                         value={empleadoSeleccionado}
                                         onChange={(e) => setEmpleadoSeleccionado(e.target.value)}
-                                    >
-                                        <option value="">-- Selecciona --</option>
-                                        {empleados.map(emp => (
-                                            <option key={emp.idEmpleado} value={emp.idEmpleado}>
-                                                {emp.nombre} ({emp.puesto})
-                                            </option>
-                                        ))}
-                                    </select>
+                                        options={empleadosOptions}
+                                        placeholder="-- Selecciona --"
+                                    />
                                 </div>
                             )}
 
@@ -293,34 +306,29 @@ export default function ControlAsistencias() {
                             {/* FILTROS EN CABECERA (Solo administradores) */}
                             {!esEmpleado && (
                                 <div className="d-flex align-items-center gap-2 flex-wrap" style={{ fontSize: '0.8rem' }}>
-                                    <select 
-                                        className="form-select py-1 px-2.5" 
-                                        style={{ width: '150px', height: '38px', borderRadius: '8px' }}
-                                        value={filtroEmpleado}
-                                        onChange={(e) => setFiltroEmpleado(e.target.value)}
-                                    >
-                                        <option value="">Filtrar Empleado</option>
-                                        {empleados.map(emp => (
-                                            <option key={emp.idEmpleado} value={emp.idEmpleado}>{emp.nombre}</option>
-                                        ))}
-                                    </select>
+                                    <div style={{ minWidth: '160px' }}>
+                                        <TomSelect
+                                            value={filtroEmpleado}
+                                            onChange={(e) => setFiltroEmpleado(e.target.value)}
+                                            options={filtroEmpleadosOptions}
+                                            placeholder="Filtrar Empleado"
+                                        />
+                                    </div>
                                     
-                                    <input 
-                                        type="date"
-                                        className="form-control py-1 px-2"
-                                        style={{ width: '130px', height: '38px', borderRadius: '8px' }}
-                                        value={fechaInicio}
-                                        onChange={(e) => setFechaInicio(e.target.value)}
-                                        title="Fecha Inicio"
-                                    />
-                                    <input 
-                                        type="date"
-                                        className="form-control py-1 px-2"
-                                        style={{ width: '130px', height: '38px', borderRadius: '8px' }}
-                                        value={fechaFin}
-                                        onChange={(e) => setFechaFin(e.target.value)}
-                                        title="Fecha Fin"
-                                    />
+                                    <div className="datepicker-compact">
+                                        <DatePicker
+                                            value={fechaInicio}
+                                            onChange={(e) => setFechaInicio(e.target.value)}
+                                            placeholder="Fecha inicio"
+                                        />
+                                    </div>
+                                    <div className="datepicker-compact">
+                                        <DatePicker
+                                            value={fechaFin}
+                                            onChange={(e) => setFechaFin(e.target.value)}
+                                            placeholder="Fecha fin"
+                                        />
+                                    </div>
                                 </div>
                             )}
                         </div>
@@ -331,6 +339,7 @@ export default function ControlAsistencias() {
                                     <p className="mb-0 text-secondary">No se encontraron asistencias en el rango de búsqueda.</p>
                                 </div>
                             ) : (
+                                <ScrollableTable>
                                 <div className="table-responsive">
                                     <table className="table table-hover align-middle">
                                         <thead>
@@ -348,7 +357,7 @@ export default function ControlAsistencias() {
                                                 const horas = calcularHorasTrabajadas(asist.hora_entrada, asist.hora_salida);
                                                 return (
                                                     <tr key={asist.idAsistencia}>
-                                                        <td className="fw-semibold text-light">{asist.nombre_empleado}</td>
+                                                        <td className="fw-semibold">{asist.nombre_empleado}</td>
                                                         <td className="text-secondary">{asist.fecha}</td>
                                                         <td className="font-monospace text-info">{asist.hora_entrada}</td>
                                                         <td className="font-monospace text-secondary">
@@ -374,6 +383,7 @@ export default function ControlAsistencias() {
                                         </tbody>
                                     </table>
                                 </div>
+                                </ScrollableTable>
                             )}
                         </div>
                     </div>

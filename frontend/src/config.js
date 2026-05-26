@@ -1,2 +1,2 @@
 export const urlBase =
-  import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/empleados'
+  import.meta.env.VITE_API_BASE_URL || '/api/empleados'

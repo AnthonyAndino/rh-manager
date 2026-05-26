@@ -25,7 +25,7 @@ export default function Register() {
 
         try {
             setCargando(true);
-            const res = await axios.post('http://localhost:8000/api/auth/register', { username, email, password });
+            const res = await axios.post('/api/auth/register', { username, email, password });
             login(res.data.token, res.data.user);
             navigate('/');
         } catch (err) {
