@@ -1,8 +1,16 @@
-import { Link, useLocation } from "react-router-dom";
-import { Users, Clock, DollarSign, Briefcase } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "./AuthContext";
+import { Users, Clock, DollarSign, Briefcase, LogOut } from "lucide-react";
 
 export default function Navegacion() {
     const location = useLocation()
+    const navigate = useNavigate()
+    const { logout, user } = useAuth()
+
+    const handleLogout = () => {
+        logout()
+        navigate('/login')
+    }
 
     return (
         <nav className="navbar navbar-expand-lg mb-4 sticky-top">
@@ -17,7 +25,7 @@ export default function Navegacion() {
                 </button>
 
                 <div id="navMain" className="collapse navbar-collapse">
-                    <ul className="navbar-nav ms-auto gap-2">
+                    <ul className="navbar-nav ms-auto gap-3 align-items-center">
                         <li className="nav-item">
                             <Link 
                                 className={`nav-link d-flex align-items-center gap-2 ${location.pathname === '/' ? 'active' : ''}`} 
@@ -45,6 +53,21 @@ export default function Navegacion() {
                                 Nómina
                             </Link>
                         </li>
+                        
+                        {user && (
+                            <li className="nav-item border-start ps-3 d-flex align-items-center gap-3">
+                                <span className="small text-secondary fw-semibold">
+                                    {user.username}
+                                </span>
+                                <button 
+                                    onClick={handleLogout} 
+                                    className="btn btn-sm btn-outline-danger border-0 p-2 d-flex align-items-center justify-content-center rounded-circle"
+                                    title="Cerrar Sesión"
+                                >
+                                    <LogOut size={16} />
+                                </button>
+                            </li>
+                        )}
                     </ul>
                 </div>
             </div>
