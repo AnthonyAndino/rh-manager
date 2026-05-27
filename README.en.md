@@ -12,20 +12,7 @@ Dashboard · Attendance · Payroll · Role-Based Auth · **Sand & Terracotta** D
 
 </div>
 
----
-
-## Preview
-
-| Screen | Preview |
-|--------|---------|
-| **Login** | ![Login](frontend/public/assets/readme/login.png) |
-| **Dashboard** | ![Dashboard](frontend/public/assets/readme/dashboard.png) |
-| **Employee List** | ![Employees](frontend/public/assets/readme/empleados.png) |
-| **Attendance Control** | ![Attendance](frontend/public/assets/readme/asistencias.png) |
-| **Payroll** | ![Payroll](frontend/public/assets/readme/nominas.png) |
-| **Sidebar** | ![Sidebar](frontend/public/assets/readme/sidebarExpandido.png) |
-| **Collapsed Sidebar** | ![Sidebar](frontend/public/assets/readme/sidebarColapsado.png) |
-| **Dark Mode** | ![Dark](frontend/public/assets/readme/darkMode.png) |
+![Dashboard](frontend/public/assets/readme/dashboard.png)
 
 ---
 
@@ -175,21 +162,18 @@ rh-manager/
 
 ---
 
-## Screenshot Guide
+## Gallery
 
-Save images to `frontend/public/assets/readme/` with these filenames:
-
-| File | Content |
-|------|---------|
-| `login.png` | Login with animated spheres and glassmorphism |
-| `register.png` | Registration with inverted spheres |
-| `dashboard.png` | Dashboard with KPIs, table, and chart |
-| `empleados.png` | Employee list with filters, pagination, and export |
-| `asistencias.png` | Attendance checker + employee/date filters |
-| `nominas.png` | Payroll generation and historical table |
-| `sidebarExpandido.png` | Full expanded sidebar with all sections |
-| `sidebarColapsado.png` | Collapsed sidebar with icons only |
-| `darkMode.png` | Full dashboard in dark mode |
+| Screen | Preview |
+|--------|---------|
+| **Login** | ![Login](frontend/public/assets/readme/login.png) |
+| **Register** | ![Register](frontend/public/assets/readme/register.png) |
+| **Employee List** | ![Employees](frontend/public/assets/readme/empleados.png) |
+| **Attendance Control** | ![Attendance](frontend/public/assets/readme/asistencias.png) |
+| **Payroll** | ![Payroll](frontend/public/assets/readme/nominas.png) |
+| **Sidebar Expanded** | ![Sidebar](frontend/public/assets/readme/sidebarExpandido.png) |
+| **Sidebar Collapsed** | ![Sidebar](frontend/public/assets/readme/sidebarColapsado.png) |
+| **Dark Mode** | ![Dark](frontend/public/assets/readme/darkMode.png) |
 
 ---
 
