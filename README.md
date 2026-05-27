@@ -20,14 +20,14 @@ Dashboard · Asistencia · Nóminas · Autenticación por roles · Diseño **San
 
 | Pantalla | Vista |
 |----------|-------|
-| **Login** | ![Login](public/assets/readme/login.png) |
-| **Dashboard** | ![Dashboard](public/assets/readme/dashboard.png) |
-| **Listado de Empleados** | ![Empleados](public/assets/readme/empleados.png) |
-| **Control de Asistencia** | ![Asistencia](public/assets/readme/asistencias.png) |
-| **Nóminas** | ![Nóminas](public/assets/readme/nominas.png) |
-| **Sidebar** | ![Sidebar](public/assets/readme/sidebarExpandido.png) |
-| **Sidebar Colapsado** | ![Sidebar](public/assets/readme/sidebarColapsado.png) |
-| **Modo Oscuro** | ![Dark](public/assets/readme/darkMode.png) |
+| **Login** | ![Login](frontend/public/assets/readme/login.png) |
+| **Dashboard** | ![Dashboard](frontend/public/assets/readme/dashboard.png) |
+| **Listado de Empleados** | ![Empleados](frontend/public/assets/readme/empleados.png) |
+| **Control de Asistencia** | ![Asistencia](frontend/public/assets/readme/asistencias.png) |
+| **Nóminas** | ![Nóminas](frontend/public/assets/readme/nominas.png) |
+| **Sidebar** | ![Sidebar](frontend/public/assets/readme/sidebarExpandido.png) |
+| **Sidebar Colapsado** | ![Sidebar](frontend/public/assets/readme/sidebarColapsado.png) |
+| **Modo Oscuro** | ![Dark](frontend/public/assets/readme/darkMode.png) |
 
 ---
 
@@ -197,6 +197,4 @@ Guarda las imágenes en `frontend/public/assets/readme/` y asígnale estos nombr
 
 ## Licencia
 
-```
-MIT License — Copyright (c) 2026
-```
+Distribuido bajo la licencia MIT. Ver [LICENSE](./LICENSE) para más información.

@@ -18,14 +18,14 @@ Dashboard · Attendance · Payroll · Role-Based Auth · **Sand & Terracotta** D
 
 | Screen | Preview |
 |--------|---------|
-| **Login** | ![Login](public/assets/readme/login.png) |
-| **Dashboard** | ![Dashboard](public/assets/readme/dashboard.png) |
-| **Employee List** | ![Employees](public/assets/readme/empleados.png) |
-| **Attendance Control** | ![Attendance](public/assets/readme/asistencias.png) |
-| **Payroll** | ![Payroll](public/assets/readme/nominas.png) |
-| **Sidebar** | ![Sidebar](public/assets/readme/sidebarExpandido.png) |
-| **Collapsed Sidebar** | ![Sidebar](public/assets/readme/sidebarColapsado.png) |
-| **Dark Mode** | ![Dark](public/assets/readme/darkMode.png) |
+| **Login** | ![Login](frontend/public/assets/readme/login.png) |
+| **Dashboard** | ![Dashboard](frontend/public/assets/readme/dashboard.png) |
+| **Employee List** | ![Employees](frontend/public/assets/readme/empleados.png) |
+| **Attendance Control** | ![Attendance](frontend/public/assets/readme/asistencias.png) |
+| **Payroll** | ![Payroll](frontend/public/assets/readme/nominas.png) |
+| **Sidebar** | ![Sidebar](frontend/public/assets/readme/sidebarExpandido.png) |
+| **Collapsed Sidebar** | ![Sidebar](frontend/public/assets/readme/sidebarColapsado.png) |
+| **Dark Mode** | ![Dark](frontend/public/assets/readme/darkMode.png) |
 
 ---
 
@@ -195,6 +195,4 @@ Save images to `frontend/public/assets/readme/` with these filenames:
 
 ## License
 
-```
-MIT License — Copyright (c) 2026
-```
+Distributed under the MIT License. See [LICENSE](./LICENSE) for more information.
